@@ -159,6 +159,11 @@ export default function HomePage() {
       return;
     }
 
+    let formattedTargetUrl = targetUrl.trim();
+    if (formattedTargetUrl && !/^https?:\/\//i.test(formattedTargetUrl)) {
+      formattedTargetUrl = `https://${formattedTargetUrl}`;
+    }
+
     setLoading(true);
 
     try {
@@ -166,7 +171,7 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          targetUrl,
+          targetUrl: formattedTargetUrl,
           title: hideText ? '' : (title || 'PicLink Ads'),
           description: hideText ? '' : description,
           imageUrl: imageUrl || previewImage || '/uploads/placeholder.jpg',
@@ -288,9 +293,9 @@ export default function HomePage() {
                       <span>Link đích <span style={{ color: '#ef4444' }}>*</span></span>
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       className="compact-input"
-                      placeholder="https://shopee.vn/product/..."
+                      placeholder="shopee.vn hoặc https://shopee.vn/product/..."
                       value={targetUrl}
                       onChange={(e) => setTargetUrl(e.target.value)}
                       required

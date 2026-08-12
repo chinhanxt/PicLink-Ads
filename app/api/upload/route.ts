@@ -4,9 +4,29 @@ import fs from 'fs';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 
+import os from 'os';
+
 const execFileAsync = promisify(execFile);
-const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
 const PYTHON_SCRIPT = path.join(process.cwd(), 'python_services', 'image_processor.py');
+
+function getUploadsDir(): string {
+  const primary = path.join(process.cwd(), 'public', 'uploads');
+  try {
+    if (!fs.existsSync(primary)) {
+      fs.mkdirSync(primary, { recursive: true });
+    }
+    const testFile = path.join(primary, `.test_${Date.now()}`);
+    fs.writeFileSync(testFile, 'test');
+    fs.unlinkSync(testFile);
+    return primary;
+  } catch (e) {
+    const tmp = path.join(os.tmpdir(), 'uploads');
+    if (!fs.existsSync(tmp)) {
+      fs.mkdirSync(tmp, { recursive: true });
+    }
+    return tmp;
+  }
+}
 
 export async function POST(request: NextRequest) {
   let tempInputPath: string | null = null;
@@ -14,6 +34,7 @@ export async function POST(request: NextRequest) {
     const contentType = request.headers.get('content-type') || '';
     let imageBuffer: Buffer | null = null;
     let ctaType = 'none';
+    const uploadsDir = getUploadsDir();
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
@@ -31,7 +52,7 @@ export async function POST(request: NextRequest) {
           const arrayBuffer = await res.arrayBuffer();
           imageBuffer = Buffer.from(arrayBuffer);
         } else if (urlParam.startsWith('/uploads/')) {
-          const localPath = path.join(process.cwd(), 'public', urlParam);
+          const localPath = path.join(uploadsDir, path.basename(urlParam));
           if (fs.existsSync(localPath)) {
             imageBuffer = fs.readFileSync(localPath);
           }
@@ -47,7 +68,7 @@ export async function POST(request: NextRequest) {
           const arrayBuffer = await res.arrayBuffer();
           imageBuffer = Buffer.from(arrayBuffer);
         } else if (body.imageUrl.startsWith('/uploads/')) {
-          const localPath = path.join(process.cwd(), 'public', body.imageUrl);
+          const localPath = path.join(uploadsDir, path.basename(body.imageUrl));
           if (fs.existsSync(localPath)) {
             imageBuffer = fs.readFileSync(localPath);
           }
@@ -59,15 +80,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'No image file or valid imageUrl provided' }, { status: 400 });
     }
 
-    // Ensure uploads directory exists
-    if (!fs.existsSync(UPLOADS_DIR)) {
-      fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-    }
-
     const uniqueId = `${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-    tempInputPath = path.join(UPLOADS_DIR, `temp_${uniqueId}.tmp`);
+    tempInputPath = path.join(uploadsDir, `temp_${uniqueId}.tmp`);
     const outputFilename = `${uniqueId}.jpg`;
-    const outputPath = path.join(UPLOADS_DIR, outputFilename);
+    const outputPath = path.join(uploadsDir, outputFilename);
 
     fs.writeFileSync(tempInputPath, imageBuffer);
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 
 export async function GET(
   request: NextRequest,
@@ -11,7 +12,13 @@ export async function GET(
 
     // Prevent directory traversal attacks
     const sanitizedFilename = path.basename(filename);
-    const filePath = path.join(process.cwd(), 'public', 'uploads', sanitizedFilename);
+    const primaryPath = path.join(process.cwd(), 'public', 'uploads', sanitizedFilename);
+    const tmpPath = path.join(os.tmpdir(), 'uploads', sanitizedFilename);
+
+    let filePath = primaryPath;
+    if (!fs.existsSync(filePath)) {
+      filePath = tmpPath;
+    }
 
     if (!fs.existsSync(filePath)) {
       return new NextResponse('File Not Found', { status: 404 });

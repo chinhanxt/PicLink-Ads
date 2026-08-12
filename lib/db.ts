@@ -37,7 +37,22 @@ export interface CardWithClicks extends Card {
   total_clicks: number;
 }
 
-const DB_PATH = process.env.DATABASE_PATH || path.join(process.cwd(), 'piclink.db');
+import os from 'os';
+
+function getDbPath(): string {
+  if (process.env.DATABASE_PATH) return process.env.DATABASE_PATH;
+  const primary = path.join(process.cwd(), 'piclink.db');
+  try {
+    const testFile = path.join(process.cwd(), `.test_db_${Date.now()}`);
+    fs.writeFileSync(testFile, 'test');
+    fs.unlinkSync(testFile);
+    return primary;
+  } catch (e) {
+    return path.join(os.tmpdir(), 'piclink.db');
+  }
+}
+
+const DB_PATH = getDbPath();
 
 let dbInstance: Database.Database | null = null;
 
