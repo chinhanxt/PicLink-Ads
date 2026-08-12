@@ -50,11 +50,28 @@ Giữ modal hiện tại, xác nhận thông điệp dẫn người dùng:
 - **Tạo tiếp** (giữ nguyên, reset form — đã fix)
 - **Bỏ**: nút "Tải ảnh bìa" (theo yêu cầu), bỏ mọi ý tưởng caption trộn ký tự ẩn.
 
-### 3. Không thay đổi
+### 3. Triển khai domain thật qua Vercel (giải quyết dòng domain dài)
+
+Dòng domain FB hiển thị = host của link đã dán. Domain tunnel free (`*.trycloudflare.com`) hiện ra dài + không tin cậy. Giải pháp:
+
+- **Deploy app lên Vercel** (miễn phí, HTTPS permanent, hot-reload từ git/mã nguồn).
+- **Gắn domain riêng** (người dùng tự mua, ví dụ gợi ý rẻ: `.xyz`, `.top`, `.site`) vào Vercel project.
+- Sau khi gắn: mọi card link thành `https://tencua-ban.com/c/<slug>` → dòng domain dưới ảnh chỉ còn `tencua-ban.com`, ngắn và sạch.
+- **Lưu ý triển khai:** DB dùng SQLite file (`piclink.db`) — trên Vercel serverless, filesystem không persistent giữa requests. Cần chọn 1 trong 2:
+  - (a) Chuyển DB sang service bên ngoài (VD Turso/libSQL, hoặc Supabase Postgres) để dữ liệu bền.
+  - (b) Tạm chấp nhận: giữ SQLite local cho bước test, triển khai DB đám mây trong vòng lặp kế tiếp.
+- Mục này là phần riêng, có thể tách thành sub-project sau khi hoàn tất mục 1+2.
+
+### 4. Không thay đổi
 
 - Không thêm thuật toán obfuscate zero-width.
 - Không thêm field mới vào DB.
 - Không đổi luồng redirect của `/c/[slug]`.
+
+### 5. Quyết định trước đó bị loại
+
+- Trộn ký tự ẩn vào domain: **không khả thi** — FB tự bóc hostname từ URL đã dán, không đọc từ thẻ OG nào; URL chỉ thị được mọi thẻ thì đó là domain thật, không thể giấu.
+- Domain dùng ký tự trống/ẩn: **không khả thi** — DNS không cho phép.
 
 ## Testing
 
@@ -69,3 +86,4 @@ Giữ modal hiện tại, xác nhận thông điệp dẫn người dùng:
 - Không làm photo post thuần.
 - Không làm quảng cáo trả phí.
 - Không làm caption/comment tự sinh.
+- Không trộn ký tự ẩn vào domain/URL.
