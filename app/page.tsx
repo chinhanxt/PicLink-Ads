@@ -5,9 +5,12 @@ import Link from 'next/link';
 import {
   triggerDirectLinkAd,
   AdsterraLeaderboardBanner,
+  AdsterraMobileBanner,
   Adsterra468x60Banner,
   Adsterra300x250Banner,
   AdsterraNativeBanner,
+  Adsterra160x600Banner,
+  Adsterra160x300Banner,
 } from '@/components/AdComponents';
 
 interface CreateCardResponse {
@@ -237,7 +240,7 @@ export default function HomePage() {
   };
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <header className="app-header">
         <div className="header-inner">
           <Link href="/" className="brand">
@@ -248,8 +251,11 @@ export default function HomePage() {
       </header>
 
       <main className="studio-viewport">
-        {/* Top Leaderboard Banner */}
+        {/* Ad Banner 1: Leaderboard 728x90 */}
         <AdsterraLeaderboardBanner />
+
+        {/* Ad Banner 2: Mobile 320x50 */}
+        <AdsterraMobileBanner />
 
         <div className="studio-split-layout">
           {/* Left Form Side Panel */}
@@ -397,7 +403,10 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Banner 468x60 above submit button */}
+              {/* Ad Banner 3: Skyscraper 160x300 in Form */}
+              <Adsterra160x300Banner />
+
+              {/* Ad Banner 4: 468x60 above submit button */}
               <Adsterra468x60Banner />
 
               {/* Bottom Actions */}
@@ -487,10 +496,16 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Ad Banner 300x250 below Preview */}
+            {/* Ad Banner 5: 300x250 Medium Rectangle below Preview */}
             <Adsterra300x250Banner />
+
+            {/* Ad Banner 6: 160x600 Wide Skyscraper */}
+            <Adsterra160x600Banner />
           </div>
         </div>
+
+        {/* Ad Banner 7: Native Banner at bottom of page */}
+        <AdsterraNativeBanner />
 
         {/* Modal Output Result */}
         {successResult && (

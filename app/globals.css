@@ -1614,7 +1614,7 @@ button, input, textarea, select {
    Single-Screen Compact Studio & Facebook Live Preview System
    ========================================================================== */
 .studio-viewport {
-  height: calc(100vh - 54px);
+  min-height: calc(100vh - 54px);
   width: 100%;
   max-width: 100%;
   margin: 0;
@@ -1622,7 +1622,7 @@ button, input, textarea, select {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .studio-split-layout {

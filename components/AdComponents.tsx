@@ -19,7 +19,7 @@ export function triggerDirectLinkAd() {
   }
 }
 
-/** 1. Popunder & Social Bar scripts injector */
+/** 1. Popunder & Social Bar scripts injector (Global) */
 export function AdsterraPopunderInjector() {
   useEffect(() => {
     const scripts = [
@@ -40,7 +40,7 @@ export function AdsterraPopunderInjector() {
   return null;
 }
 
-/** 2. Native Ad Banner */
+/** 2. Native Ad Banner (container-4004ae1af2f5bcbeb988daa86280d559) */
 export function AdsterraNativeBanner() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -61,16 +61,15 @@ export function AdsterraNativeBanner() {
   }, []);
 
   return (
-    <div className="w-full my-3 flex justify-center items-center overflow-x-auto">
-      <div ref={containerRef} className="min-h-[60px]" />
+    <div style={{ width: '100%', margin: '12px 0', display: 'flex', justifyContent: 'center', alignItems: 'center', overflowX: 'auto' }}>
+      <div ref={containerRef} style={{ minHeight: '60px' }} />
     </div>
   );
 }
 
-/** 3. Leaderboard 728x90 (Desktop) / 320x50 (Mobile) */
+/** 3. Leaderboard 728x90 Banner */
 export function AdsterraLeaderboardBanner() {
   const desktopRef = useRef<HTMLDivElement>(null);
-  const mobileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (desktopRef.current) {
@@ -92,7 +91,22 @@ export function AdsterraLeaderboardBanner() {
       desktopRef.current.appendChild(confScript);
       desktopRef.current.appendChild(invokeScript);
     }
+  }, []);
 
+  return (
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px 0' }}>
+      <div style={{ width: '728px', height: '90px', maxWidth: '100%', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div ref={desktopRef} style={{ width: '728px', height: '90px' }} />
+      </div>
+    </div>
+  );
+}
+
+/** 4. Mobile Banner 320x50 */
+export function AdsterraMobileBanner() {
+  const mobileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
     if (mobileRef.current) {
       mobileRef.current.innerHTML = '';
       const confScriptM = document.createElement('script');
@@ -115,18 +129,15 @@ export function AdsterraLeaderboardBanner() {
   }, []);
 
   return (
-    <div className="w-full flex justify-center items-center my-2">
-      <div className="hidden md:flex justify-center items-center w-[728px] h-[90px] overflow-hidden">
-        <div ref={desktopRef} className="w-[728px] h-[90px]" />
-      </div>
-      <div className="flex md:hidden justify-center items-center w-[320px] h-[50px] overflow-hidden">
-        <div ref={mobileRef} className="w-[320px] h-[50px]" />
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '8px 0' }}>
+      <div style={{ width: '320px', height: '50px', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div ref={mobileRef} style={{ width: '320px', height: '50px' }} />
       </div>
     </div>
   );
 }
 
-/** 4. Banner 468x60 */
+/** 5. Banner 468x60 */
 export function Adsterra468x60Banner() {
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -154,13 +165,13 @@ export function Adsterra468x60Banner() {
   }, []);
 
   return (
-    <div className="flex justify-center items-center my-2 overflow-hidden max-w-full">
-      <div ref={bannerRef} className="w-[468px] h-[60px]" />
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px 0', overflow: 'hidden' }}>
+      <div ref={bannerRef} style={{ width: '468px', height: '60px', maxWidth: '100%' }} />
     </div>
   );
 }
 
-/** 5. Banner 300x250 Medium Rectangle */
+/** 6. Banner 300x250 Medium Rectangle */
 export function Adsterra300x250Banner() {
   const bannerRef = useRef<HTMLDivElement>(null);
 
@@ -188,16 +199,15 @@ export function Adsterra300x250Banner() {
   }, []);
 
   return (
-    <div className="flex justify-center items-center my-3 overflow-hidden">
-      <div ref={bannerRef} className="w-[300px] h-[250px]" />
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '14px 0', overflow: 'hidden' }}>
+      <div ref={bannerRef} style={{ width: '300px', height: '250px' }} />
     </div>
   );
 }
 
-/** 6. Skyscraper 160x600 & 160x300 */
-export function AdsterraSkyscraperBanner({ height = 600 }: { height?: 600 | 300 }) {
+/** 7. Skyscraper 160x600 Banner */
+export function Adsterra160x600Banner() {
   const bannerRef = useRef<HTMLDivElement>(null);
-  const key = height === 600 ? '96fcfbddabbb4fa0365093851845a93a' : 'f0950b2a147069648584ac6e3f5686e9';
 
   useEffect(() => {
     if (!bannerRef.current) return;
@@ -207,24 +217,58 @@ export function AdsterraSkyscraperBanner({ height = 600 }: { height?: 600 | 300 
     confScript.type = 'text/javascript';
     confScript.text = `
       atOptions = {
-        'key' : '${key}',
+        'key' : '96fcfbddabbb4fa0365093851845a93a',
         'format' : 'iframe',
-        'height' : ${height},
+        'height' : 600,
         'width' : 160,
         'params' : {}
       };
     `;
     const invokeScript = document.createElement('script');
     invokeScript.type = 'text/javascript';
-    invokeScript.src = `https://www.highperformanceformat.com/${key}/invoke.js`;
+    invokeScript.src = 'https://www.highperformanceformat.com/96fcfbddabbb4fa0365093851845a93a/invoke.js';
 
     bannerRef.current.appendChild(confScript);
     bannerRef.current.appendChild(invokeScript);
-  }, [height, key]);
+  }, []);
 
   return (
-    <div className="flex justify-center items-center my-2 overflow-hidden">
-      <div ref={bannerRef} style={{ width: '160px', height: `${height}px` }} />
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px 0', overflow: 'hidden' }}>
+      <div ref={bannerRef} style={{ width: '160px', height: '600px' }} />
+    </div>
+  );
+}
+
+/** 8. Skyscraper 160x300 Banner */
+export function Adsterra160x300Banner() {
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!bannerRef.current) return;
+    bannerRef.current.innerHTML = '';
+
+    const confScript = document.createElement('script');
+    confScript.type = 'text/javascript';
+    confScript.text = `
+      atOptions = {
+        'key' : 'f0950b2a147069648584ac6e3f5686e9',
+        'format' : 'iframe',
+        'height' : 300,
+        'width' : 160,
+        'params' : {}
+      };
+    `;
+    const invokeScript = document.createElement('script');
+    invokeScript.type = 'text/javascript';
+    invokeScript.src = 'https://www.highperformanceformat.com/f0950b2a147069648584ac6e3f5686e9/invoke.js';
+
+    bannerRef.current.appendChild(confScript);
+    bannerRef.current.appendChild(invokeScript);
+  }, []);
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '10px 0', overflow: 'hidden' }}>
+      <div ref={bannerRef} style={{ width: '160px', height: '300px' }} />
     </div>
   );
 }
