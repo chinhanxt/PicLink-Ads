@@ -2,6 +2,13 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import {
+  triggerDirectLinkAd,
+  AdsterraLeaderboardBanner,
+  Adsterra468x60Banner,
+  Adsterra300x250Banner,
+  AdsterraNativeBanner,
+} from '@/components/AdComponents';
 
 interface CreateCardResponse {
   success: boolean;
@@ -165,6 +172,7 @@ export default function HomePage() {
     }
 
     setLoading(true);
+    triggerDirectLinkAd();
 
     try {
       const res = await fetch('/api/create-card', {
@@ -199,10 +207,12 @@ export default function HomePage() {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setCopied(true);
+    triggerDirectLinkAd();
     setTimeout(() => setCopied(false), 2000);
   };
 
   const resetForm = () => {
+    triggerDirectLinkAd();
     setTargetUrl('');
     setTitle('');
     setDescription('');
@@ -238,6 +248,9 @@ export default function HomePage() {
       </header>
 
       <main className="studio-viewport">
+        {/* Top Leaderboard Banner */}
+        <AdsterraLeaderboardBanner />
+
         <div className="studio-split-layout">
           {/* Left Form Side Panel */}
           <div className="compact-form-card">
@@ -384,6 +397,9 @@ export default function HomePage() {
                 </div>
               </div>
 
+              {/* Banner 468x60 above submit button */}
+              <Adsterra468x60Banner />
+
               {/* Bottom Actions */}
               <div className="compact-form-bottom">
                 <button
@@ -470,6 +486,9 @@ export default function HomePage() {
                 )}
               </div>
             </div>
+
+            {/* Ad Banner 300x250 below Preview */}
+            <Adsterra300x250Banner />
           </div>
         </div>
 
@@ -483,10 +502,13 @@ export default function HomePage() {
               <h2 className="modal-title" style={{ textAlign: 'center', marginBottom: '6px' }}>
                 Link đã sẵn sàng!
               </h2>
-              <p className="modal-sub" style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <p className="modal-sub" style={{ textAlign: 'center', marginBottom: '16px' }}>
                 Dán link này lên bài đăng Facebook — FB tự hiện tấm ảnh bìa,
                 khách bấm vào ảnh sẽ được chuyển thẳng về link đích.
               </p>
+
+              {/* Native Banner inside Modal */}
+              <AdsterraNativeBanner />
 
               <div className="link-box" style={{ marginBottom: '16px', width: '100%' }}>
                 <span className="link">{successResult.fullCardUrl}</span>
@@ -500,6 +522,7 @@ export default function HomePage() {
                   href={successResult.fullCardUrl}
                   target="_blank"
                   rel="noreferrer"
+                  onClick={() => triggerDirectLinkAd()}
                   className="btn btn-soft"
                   style={{ flex: 1, textAlign: 'center' }}
                 >

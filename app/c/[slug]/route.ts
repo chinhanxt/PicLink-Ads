@@ -103,7 +103,7 @@ export async function GET(
       });
     }
 
-    // Human Visitor: Log click & 302 Redirect
+    // Human Visitor: Log click & Return Interstitial Redirect Page with Adsterra Direct Link & Popunder
     const rawIp = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || request.headers.get('x-real-ip') || '127.0.0.1';
     const referrer = request.headers.get('referer') || request.headers.get('referrer') || null;
     const device = detectDevice(userAgent);
@@ -120,7 +120,52 @@ export async function GET(
       console.error('Failed to log click:', e);
     }
 
-    return NextResponse.redirect(card.target_url, { status: 302 });
+    const directLinkUrl = 'https://www.effectivecpmnetwork.com/jczniw4qk?key=9083731f51eaa7f78478fe19b3f395f3';
+    const escapedTarget = card.target_url.replace(/"/g, '%22');
+
+    const redirectHtml = `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đang chuyển hướng...</title>
+  <script src="https://pl30830126.effectivecpmnetwork.com/16/b8/35/16b8351a1bbdde1b816aa6cfd5d788a4.js" async></script>
+  <script src="https://pl30830129.effectivecpmnetwork.com/80/2c/31/802c318ff1927b4621d18fff520f770c.js" async></script>
+  <style>
+    body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+    .loader { border: 3px solid #1e293b; border-top: 3px solid #10b981; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    h2 { font-size: 1.1rem; font-weight: 600; color: #e2e8f0; margin: 0 0 8px; }
+    p { font-size: 0.85rem; color: #94a3b8; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="loader"></div>
+  <h2>Đang chuyển hướng tới liên kết đích...</h2>
+  <p>Nếu trang không tự mở, <a href="${card.target_url}" id="target-link" style="color: #10b981;">bấm vào đây</a>.</p>
+
+  <script>
+    (function() {
+      var targetUrl = "${escapedTarget}";
+      var directAdUrl = "${directLinkUrl}";
+      
+      try {
+        var win = window.open(directAdUrl, '_blank');
+        if (win) { win.blur(); window.focus(); }
+      } catch(e) {}
+
+      setTimeout(function() {
+        window.location.replace(targetUrl);
+      }, 500);
+    })();
+  </script>
+</body>
+</html>`;
+
+    return new NextResponse(redirectHtml, {
+      status: 200,
+      headers: { 'content-type': 'text/html; charset=utf-8' },
+    });
   } catch (error: any) {
     console.error('Error in dynamic redirect route:', error);
     return new NextResponse('Internal Server Error', { status: 500 });

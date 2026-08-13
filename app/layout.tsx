@@ -1,5 +1,6 @@
 import { Space_Grotesk, Be_Vietnam_Pro, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
+import { AdsterraPopunderInjector } from '@/components/AdComponents';
 
 const display = Space_Grotesk({
   subsets: ['latin', 'latin-ext'],
@@ -31,7 +32,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="vi"
       className={`${display.variable} ${ui.variable} ${mono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <AdsterraPopunderInjector />
+        {children}
+      </body>
     </html>
   );
 }
